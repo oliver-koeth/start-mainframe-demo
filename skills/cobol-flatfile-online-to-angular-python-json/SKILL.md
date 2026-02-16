@@ -85,6 +85,48 @@ Apply generic scheduling heuristics from COBOL semantics using `references/batch
 3. Frontend: Playwright E2E tests for interactive flows and batch monitoring UI.
 4. Ensure backend imports cleanly and Angular builds.
 
+## Runtime Integration Guardrails (Mandatory)
+
+Before finalizing migration output, enforce these cross-stack rules and tests.
+
+### 1) Frontend/Backend origin strategy
+- Choose one dev strategy and implement it completely:
+  - Preferred: Angular proxy (`/api/* -> backend`) with frontend API base `'/api'`.
+  - Alternative: direct backend URL with explicit CORS allowlist.
+- If proxy is used, `npm start` must include proxy config.
+- Never mix wildcard CORS + credentials.
+
+### 2) API response contract
+- All REST endpoints must return valid JSON payloads with `application/json`.
+- Frontend service methods must match backend shapes (`list` endpoints return arrays, detail endpoints return objects).
+- Add a smoke test that calls `/jobs`, `/accounts`, `/transactions` from frontend context and confirms JSON parse success.
+
+### 3) Serialization invariants
+- JSON persistence serializer must support:
+  - `Decimal` (string output)
+  - `datetime/date` (ISO-8601 string output)
+- Add a persistence test that writes and reloads job runs with timestamps.
+
+### 4) Fixed-width COBOL data parsing invariants
+- Parse `.DAT` using exact FD widths.
+- Preserve COBOL date/time display formats where required (`YYYY/MM/DD`, `HH:MM:SS`).
+- Ignore unsupported transaction types during seed/import.
+- Add parser tests with real sample lines and malformed-width edge lines.
+
+### 5) Angular template/type safety
+- Escape `@` in inline templates (`&#64;`) when literal.
+- Use non-nullable reactive forms where API DTO expects `string` (not `string | null`).
+- Compile frontend in CI to catch template/type errors (`ng build`).
+
+### 6) Job API conflict/idempotency behavior
+- Define and implement overlap semantics explicitly (e.g., return structured non-error “running/skipped” response or 409 with frontend handling).
+- Add tests for manual double-trigger, same-period rerun watermark behavior, and run history persistence.
+
+### 7) Pre-handoff validation gates (must pass)
+- Backend import + pytest.
+- Frontend build + tests.
+- Playwright E2E including jobs page load and run trigger flow.
+
 ## Reporting
 
 1. Always emit **mapping documentation**:
