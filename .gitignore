@@ -34,6 +34,9 @@ dist/
 .angular/
 .next/
 
+# Output files
+output/
+
 # IDE
 .vscode/
 .idea/
@@ -66,4 +69,3 @@ MONTHEND
 CUSTOMERS.DAT
 TRANSACTIONS.DAT
 
-output/
