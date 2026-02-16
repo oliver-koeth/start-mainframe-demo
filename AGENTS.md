@@ -1,70 +1,8 @@
-# Mainframe Demo: COBOL to Angular + Python (Codex Skill)
+# Purpose
 
-This repository demonstrates a COBOL mainframe migration to a modern web application using a Codex skill. The target architecture is a responsive Angular frontend backed by a Python (FastAPI) REST API with JSON file persistence.
+Provide a single, authoritative migration prompt and workflow expectations for converting BANKACCT.cob plus .DAT files into an Angular + FastAPI app using the COBOL migration skill. COBOL behavior overrides skill defaults.
 
-The legacy application is stored under `_legacy` and can be run with gnucobol. To install gnucobol run:
-
-```bash
-brew install gnucobol
-```
-
-Then the legacy application (code and data) can be built and run with
-
-```bash
-cobc -x -free BANKACCT.cob
-./BANKACCT
-```
-
-Create the initial data files with:
-
-```bash
-cp CUSTOMERS.DAT.original CUSTOMERS.DAT 
-cp TRANSACTIONS.DAT.original TRANSACTIONS.DAT
-```
-
-The output from Codex has been stored in `output`. If you want to run the migration itself, install the skill, create a new repo without an `output` folder, connect it to Codex and run the below migration prompt. Theresult shall look similar to:
-
-![ExampleScreen](example.png)
-
-## Local Install of the Skill
-
-The skill lives in this repo under `skills/` and must be copied into your Codex skills directory.
-
-### 1) Locate the skill folder
-
-By default, the skill path is:
-
-```
-~/work/mainframe-demo/skills/cobol-flatfile-online-to-angular-python-json
-```
-
-### 2) Copy the skill into Codex
-
-Run the following commands:
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R ~/work/mainframe-demo/skills/cobol-flatfile-online-to-angular-python-json ~/.codex/skills/
-```
-
-Later, to uninstall run:
-
-```bash
-rm -rf ~/.codex/skills/cobol-flatfile-online-to-angular-python-json
-```
-
-### 3) Restart Codex
-
-Restart Codex so it can pick up the newly installed skill.
-
-## Notes
-
-- This installation is local-only. If you move the repo or rename the skill folder, update the source path accordingly.
-- The skill should appear in Codex after restart.
-
-## CODEX Migration Prompt
-
-How to use: Start a Codex run in this repo and paste the prompt below. The prompt is written to ensure COBOL behavior overrides skill defaults.
+# Prompt
 
 ```
 CODEX Migration Prompt — COBOL BANKACCT to Angular + FastAPI
@@ -116,3 +54,9 @@ Output layout
 - Follow references/output-structure.md.
 - Do not modify _legacy or skills in this repo.
 ```
+
+# Run/Validate
+
+- Backend: run unit/integration tests (e.g., `pytest`) as provided in the output structure.
+- Frontend: run UI and E2E tests (e.g., `npm test`, `npx playwright test`) as provided in the output structure.
+- Build: ensure the Angular app builds and the FastAPI app imports cleanly.
